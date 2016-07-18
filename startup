@@ -1,0 +1,11 @@
+os.exit = print
+_G.require = dofile('arq/lib/require.lua')
+
+local testOptions = {}
+local function completeTest( shell, nIndex, sText, tPreviousText )
+  if nIndex >= 1 then
+    return fs.complete( sText, "/arq/test/", true, false  )
+  end
+end
+
+shell.setCompletionFunction( "test", completeTest )

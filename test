@@ -1,0 +1,11 @@
+local args = {...}
+
+for _,file in ipairs(args) do
+	if not fs.exists("arq/test/"..file) then
+		error("arq/test/"..file.." not found",0)
+	end
+end
+
+for _,file in ipairs(args) do
+	os.run({},"arq/test/"..file)
+end

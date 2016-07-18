@@ -1,0 +1,6 @@
+[submodule "arq"]
+	path = arq
+	url = ./arq
+[submodule "server"]
+	path = server
+	url = ./server
