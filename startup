@@ -1,5 +1,6 @@
 os.exit = print
-_G.require = dofile('arq/lib/require.lua')
+_G.USR_PATH = {"/arq","/arq/src","/server","/arq/lib"}
+_G.require = dofile('/arq/lib/require.lua')
 
 local testOptions = {}
 local function completeTest( shell, nIndex, sText, tPreviousText )
