@@ -10,3 +10,6 @@ local function completeTest( shell, nIndex, sText, tPreviousText )
 end
 
 shell.setCompletionFunction( "test", completeTest )
+
+os.unloadAPI("window")
+os.loadAPI("arq/lib/window")
