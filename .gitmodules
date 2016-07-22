@@ -1,6 +1,6 @@
 [submodule "arq"]
 	path = arq
-	url = ./arq
+	url = https://github.com/eerikem/arq.git
 [submodule "server"]
 	path = server
-	url = ./server
+	url = https://github.com/eerikem/server.git
