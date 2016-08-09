@@ -1,8 +1,9 @@
-
-local DEBUG = true
+--Enable DEBUG to pause at the end of each test.
+local DEBUG = false
 
 VM = require 'vm'
 
+local Li
 local console
 VM.log = function(str)
 --  local old = term.redirect(console)
@@ -23,7 +24,7 @@ local ui_server = require 'ui_server'
 local function stop()
   while true do
     local event = {os.pullEvent()}
-    if event[1] and event[2] and event[1] =="key"and event[2]== keys.space then
+    if event[1] and event[2] and event[1] =="key_up"and event[2]== keys.space then
       break
     end
   end
@@ -31,7 +32,7 @@ end
 
 function setup_each()
   VM.init()
-  local Li = EVE.start_link()
+  Li = EVE.start_link()
   local Ui = ui_sup.start_link(Li)
   local w,h = term.getSize()
   ui = ui_server.newWindow("terminal",w/2,h/2)
