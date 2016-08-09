@@ -1,5 +1,7 @@
 local args = {...}
 
+if #args < 1 then return print("Usage: test suite [suite2]") end
+
 for _,file in ipairs(args) do
 	if not fs.exists("arq/test/"..file) then
 		error("arq/test/"..file.." not found",0)
