@@ -1,5 +1,5 @@
 os.exit = print
-_G.USR_PATH = {"/arq","/arq/src","/server","/arq/lib"}
+_G.USR_PATH = {"/arq","/arq/src","/server","/arq/lib","/apps"}
 _G.require = dofile('/arq/lib/require.lua')
 
 local testOptions = {}
@@ -13,3 +13,5 @@ shell.setCompletionFunction( "test", completeTest )
 
 os.unloadAPI("window")
 os.loadAPI("arq/lib/window")
+
+os.run({},"arq/src/arq.lua")
