@@ -1,5 +1,5 @@
 os.exit = print
-_G.USR_PATH = {"/arq","/arq/src","/server","/arq/lib","/apps"}
+_G.USR_PATH = {"/arq","/arq/src","/server","/apps"}
 _G.require = dofile('/arq/lib/require.lua')
 
 local testOptions = {}
