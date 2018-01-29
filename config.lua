@@ -21,7 +21,7 @@ end
 
 function Config.save(data)
     local fh = fs.open(CFG_FILE,"w")
-    local cfg = JSON:encode(data)
+    local cfg = JSON:encode_pretty(data)
     fh.write(cfg)
     fh.close()  
 end
