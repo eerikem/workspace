@@ -324,20 +324,26 @@ function Program.start()
   audio_player.start_link("monitor_36","INFO","playsound fdi:event.part1.psa_welcome @a 65 47 7 1",60)
   audio_player.start_link("monitor_244","INFO","playsound fdi:event.part1.psa_map @a 86 49 -29 1",80)
   
-  local lobbyDoor = Door.new(Bundle:new(CABLE_SIDE,colors.blue))
+  local lobbyDoor = Door.new(Bundle:new(CABLE_SIDE,colors.blue),10)
   
   local levels = {
+    {
+    level=1,
+    name="Dest",
+--    callback = function() Door.open(lobbyDoor) end,
+    callback = function() exec("tpx @a[x=75,y=49,z=-35,r=2] 4") end,
+    },
     {
     coords={75,49,-35,2},
     level=3,
     name="Lobby",
     call="monitor_63",
     door=lobbyDoor
-    }
+    },
   }
   
   local lobbyElevator = elevator.new(levels)
-  elevator.newPanel("monitor_62",3,lobbyElevator)
+  local panel = elevator.newPanel("monitor_62",3,lobbyElevator)
   
   gen_server.start_link(Program,{},{})
 end
