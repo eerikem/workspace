@@ -216,11 +216,13 @@ local function callPanelUI(monitor,floor)
   return ui, callButton
 end
 
-function Program.init()
+function Program.init(door)
   local overheadLights = Bundle:new("back",colors.lightGray)
   overheadLights:enable()
   
+  Door.subscribe(door)
   return true, {
+    door = door,
     lights = overheadLights,
     reset = Bundle:new("back",colors.magenta)
   }
@@ -250,19 +252,8 @@ end
 
 function Program.handle_cast(Request,State)
   local event = Request[1]
-  if event == "close_silo" then
-    Door.close(State.teleporter)
-  elseif event == "opened" then
-    State.ui.openedSilo()
-    State.siloOpen = true
-  elseif event == "closing" then
-    State.ui.closingSilo()
-  elseif event == "closed" then
-    State.ui.closedSilo()
-    State.siloOpen = false
-  elseif event == "done_teleport" then
-    State.teleporting = false
-    Door.open(State.teleporter)
+  if event == "opened" then
+    Door.lock(State.door)
   elseif event == "redstone" then
     if State.detector:isOn() and not State.outage then
       State.outage = true
@@ -280,72 +271,76 @@ function Program.handle_info(Request,State)
 end
 
 function Program.start()
-  local d6 = Door.new(Bundle:new(CABLE_SIDE,colors.cyan))
-  local d7 = Door.new(Bundle:new(CABLE_SIDE,colors.gray))
-  local d8 = Door.new(Bundle:new(CABLE_SIDE,colors.purple))
-  
-  local doors = {
-    Door.newUI("monitor_165","SURFACE"),
-    Door.newUI("monitor_166","UTILITY"),
-    Door.newUI("monitor_204","SURFACE"),
-    
-    Door.newUI("monitor_167","ADMIN 2",d6,455),
-    Door.newUI("monitor_168","LEVEL 2",d6),
-    Door.newUI("monitor_169","ADMIN 3",d7,443),
-    Door.newUI("monitor_170","LEVEL 3",d7),
-    
-    Door.newUI("monitor_171","OFFICE"),
-    Door.newUI("monitor_172","OFFICE"),
-    
-    Door.newUI("monitor_174","ADMIN 3",d8,443),
-    Door.newUI("monitor_175"," LOBBY ",d8),
-    
-    Door.newUI("monitor_205","MEETING"),
-    Door.newUI("monitor_177","UTILITY"),
-    Door.newUI("monitor_208","SECURE"),
-    Door.newUI("monitor_180","ADMIN 5"),
-    Door.newUI("monitor_184","ADMIN"),
-    Door.newUI("monitor_206","OFFICE"),
-    
-    Door.newUI("monitor_300","LEVEL 3"),
-    Door.newUI("monitor_301","UTILITY"),
-    Door.newUI("monitor_302","LEVEL 3"),
-  }
-  
-  local elevator0 = callPanelUI("monitor_173",3)
-  local elevator3 = callPanelUI("monitor_178",3)
-  local elevator4 = callPanelUI("monitor_179",3)
-  local elevator5 = callPanelUI("monitor_72",3)
-  
-  local arrivals1 = static_ui.startFancy("monitor_176","OPERATIONS","MEETING ROOM 305")
-  local arrivals2 = static_ui.startFancy("monitor_181","OPERATIONS","BUILDING 3")
-  local arrivals3 = static_ui.startFancy("monitor_183","OPERATIONS","BUILDING 4")
-  
-  audio_player.start_link("monitor_36","INFO","playsound fdi:event.part1.psa_welcome @a 65 47 7 1",60)
-  audio_player.start_link("monitor_244","INFO","playsound fdi:event.part1.psa_map @a 86 49 -29 1",80)
-  
-  local lobbyDoor = Door.new(Bundle:new(CABLE_SIDE,colors.blue),10)
+
+  local lobbyDoor = Door.new(Bundle:new(CABLE_SIDE,colors.black),10)
   
   local levels = {
     {
-    level=1,
+    level=3,
     name="Dest",
 --    callback = function() Door.open(lobbyDoor) end,
-    callback = function() exec("tpx @a[x=75,y=49,z=-35,r=2] 4") end,
+--    callback = function() exec("tpx @a[x=75,y=49,z=-35,r=2] 4 58 31 -35") end,
+--    callback = function() exec("tpx @a[x=58,y=31,z=-34,r=2] 3 75 49 -36") end,
+    callback = function() exec("tpx @a[x=58,y=31,z=-34,r=2] 3 ~17 ~18 ~-2") end,
+--    callback = function() exec("say @a Elevator arrived at level 1") end,
     },
     {
     coords={75,49,-35,2},
-    level=3,
+    level=1,
     name="Lobby",
-    call="monitor_63",
+    call="monitor_233",
     door=lobbyDoor
     },
   }
   
   local lobbyElevator = elevator.new(levels)
-  local panel = elevator.newPanel("monitor_62",3,lobbyElevator)
+  local panel = elevator.newPanel("monitor_234",1,lobbyElevator)
+  Door.open(lobbyDoor)
+
+  local props = {
+    middle = "monitor_231",
+    doors = {
+      outer = Bundle:new(CABLE_SIDE,colors.white,"monitor_235"),
+      inner = Bundle:new(CABLE_SIDE,colors.orange,"monitor_236"),
+    },
+  }
+  Airlock.start(props)
+  props = {
+    middle = "monitor_241",
+    doors = {
+      inner = Bundle:new(CABLE_SIDE,colors.lime,"monitor_242"),
+      outer = Bundle:new(CABLE_SIDE,colors.yellow,"monitor_240")
+    },
+  }
+  Airlock.start(props)
   
-  gen_server.start_link(Program,{},{})
+  local comp = Door.new(Bundle:new(CABLE_SIDE,colors.red))
+  local access = Door.newUI("monitor_212","SERVICE",comp,455)
+  local d1 = Door.new(Bundle:new(CABLE_SIDE,colors.lightBlue))
+  local d2 = Door.new(Bundle:new(CABLE_SIDE,colors.magenta))
+  local doors = {
+    Door.newUI("monitor_214","ACCESS"),
+    Door.newUI("monitor_216","RM 232",d2,123),
+    Door.newUI("monitor_232","DORMS 3",d1),
+    Door.newUI("monitor_306","DORMS 2",d1,123),
+    Door.newUI("monitor_238","LEVEL 5"),
+    Door.newUI("monitor_239","DORMS 3"),
+  }
+  
+  --monitors 209-211,215,217-230
+  for i=209,230 do
+    if i < 212 or i > 216 or i==215 then  
+      Door.newUI("monitor_"..i,"RM  "..i)
+    end
+  end
+  
+--  local elevator5 = callPanelUI("monitor_72",3)
+  
+  local arrivals1 = static_ui.startFancy("monitor_213","DORMITORY 2","ROOMS 240-280")
+  
+--  audio_player.start_link("monitor_36","INFO","playsound fdi:event.part1.psa_welcome @a 65 47 7 1",60)
+      
+  gen_server.start_link(Program,{comp},{})
 end
 
 return Program
