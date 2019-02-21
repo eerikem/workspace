@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <buildpath>
-	<buildpathentry kind="src" path="server"/>
+	<buildpathentry excluding="sup_test.lua|vm_test.lua" kind="src" path="server"/>
 	<buildpathentry kind="src" path="arq/src"/>
-	<buildpathentry kind="src" path="apps"/>
-	<buildpathentry excluding="src/" kind="src" path="arq"/>
+	<buildpathentry excluding="lib/luaunit.lua|src/|test/" kind="src" path="arq"/>
 </buildpath>
