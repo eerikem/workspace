@@ -35,39 +35,19 @@ function Program.start()
     
   local sectorB = static_ui.startFancy("monitor_291","SECTOR B","DEP. OF INNOVATION")
   local security = static_ui.startFancy("monitor_293","SECTOR B LEVEL 6","HIGH SECURITY")
+    
+  local sectE = Teleporter.newProps({18,46,0},{9,-111,59,-6},"emitter_6")
+  sectE.door = Door.new(Bundle:new(CABLE_SIDE,colors.white))
+  sectE.detector = Bundle:new(CABLE_SIDE,colors.magenta)
+  sectE.light = Bundle:new(CABLE_SIDE,colors.orange)
   
-  local teleDoorSecE = Door.new(Bundle:new(CABLE_SIDE,colors.white))
-  Door.lock(teleDoorSecE)
-
-  local teleDoorDorm = Door.new(Bundle:new(CABLE_SIDE,colors.lightBlue))
-  Door.lock(teleDoorDorm)
+  local dorm = Teleporter.newProps({48,46,-16},{4,72,25,-7},"emitter_7")
+  dorm.door = Door.new(Bundle:new(CABLE_SIDE,colors.lightBlue))
+  dorm.detector = Bundle:new(CABLE_SIDE,colors.lime)
+  dorm.light = Bundle:new(CABLE_SIDE,colors.yellow)
   
-  local emitter6 = peripheral.wrap("emitter_6")
-  local x,y,z=18,46,0
-  emitter6.setSpace(x-1,y,z-1,x+1,y+2,z+1)
-
-  local teleSecE = Teleporter.start(
-    function() teleLeaveSound(x,y+3,z) end,
-    function() exec("tpx @a[x=%d,y=%d,z=%d,r=1] 4 26 45 0",x,y,z) end,
-    8,10,
-    teleDoorSecE,
-    Bundle:new(CABLE_SIDE,colors.magenta),
-    Bundle:new(CABLE_SIDE,colors.orange),
-    emitter6
-  )
-  
-  local emitter7 = peripheral.wrap("emitter_7")
-  local a,b,c=48,46,-16
-  emitter7.setSpace(a-1,b,c-1,a+1,b+2,c+1)
-  local teleDorm2 = Teleporter.start(
-    function() teleLeaveSound(a,b,c) end,
-    function() exec("tpx @a[x=%d,y=%d,z=%d,r=1] 4 39 45 -16",a,b,c) end,
-    8,10,
-    teleDoorDorm,
-    Bundle:new(CABLE_SIDE,colors.lime),
-    Bundle:new(CABLE_SIDE,colors.yellow),
-    emitter7
-  )
+  local teleSecE = Teleporter.start(sectE)
+  local teleDorm2 = Teleporter.start(dorm)
   
   teleUI.start("monitor_281","SECT. E",teleSecE)
   teleUI.start("monitor_282","DORM. 2",teleDorm2)
